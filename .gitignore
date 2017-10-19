@@ -194,6 +194,7 @@ core
 Detection/FastRCNN/proc
 Detection/FastRCNN/results
 Detection/FasterRCNN/Output
+Detection/FasterRCNN/OutputAlexNet
 Detection/FasterRCNN/Evaluate
 .idea/
 

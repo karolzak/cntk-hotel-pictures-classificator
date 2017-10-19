@@ -13,6 +13,7 @@ from helpers import *
 ####################################
 # Parameters
 ####################################
+#change it to your images directory. Run this script separately for each folder
 imgDir = "../../DataSets/HotailorPOC2/testImages"
 
 # no need to change these params

@@ -17,8 +17,10 @@ from helpers import *
 ####################################
 # Parameters
 ####################################
+#change it to your images directory. Run this script separately for each folder
 imgDir = "../../DataSets/HotailorPOC2/testImages"
 
+#change it to your classes names
 classes = ["curtain", "pillow", "bed", "lamp", "toilet", "sink", "tap", "towel"]
 
 
