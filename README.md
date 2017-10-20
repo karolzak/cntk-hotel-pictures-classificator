@@ -38,10 +38,12 @@ If you would like to know how to use such model, you can check [**this project**
 
 ### Initial assumptions ###
 [[back to the top]](#table-of-contents)
+
 - Due to limited time and human resources we decided to create this POC for just 2 of almost 20 different types of pictures we would like to classify in final product
 - Each type of picture (i.e. `bedroom, bathroom, bar, lobby, hotel front, restaurant`) can consists of different objects (i.e. `toilet, sink, tap, towell, bed, lamp, curtain, pillow`) which are strongly connected with that speciifc picture type. 
 
 - For our POC we used 2 picture types with 4 objects/classes per each:
+
     bedroom     |  bathroom
     :----------:|:----------:
     pillow      | tap 
@@ -178,7 +180,7 @@ You can find running web service hosted on Azure Web Apps [here](http://cntkpywe
 
 After you go through setup steps you can start training your model.
 
-In order to do it you need to run `FasterRCNN.py`script in [Detection\FasterRCNN](detection\fasterrcnn\fasterrcnn.py). 
+In order to do it you need to run `FasterRCNN.py`script in [Detection/FasterRCNN](detection/fasterrcnn). 
 
 I'm working on Windows 10 so I run the script from Anaconda Command Prompt which should be installed during setup steps.
 
@@ -207,86 +209,4 @@ AP for             bed = 0.8333
 Mean AP = 0.4489
 ```
 
-Trained model, neural network topology and evaluated images (with plotted results) can later be found in `Output` folder located in [Detection\FasterRCNN](Detection\FasterRCNN).
-
-# Code highlights
-[[back to the top]](#table-of-contents)
-
-
-- [config.py](config.py) - most variables for scripts are set in this file
-
-    
-    Variables used by web service to point out directories for temp images and CNTK models:
-    ```Python
-    [..]
-    # directories for web service:
-    __C.CNTK.TEMP_PATH = "./Temp"
-    __C.CNTK.MODEL_DIRECTORY = "./CNTKModels"
-    [..]
-    ```
-    
-    Variables for chosing the specific model:
-
-    ```Python        
-    [..]
-    __C.CNTK.DATASET = "HotailorPOC2"
-    [..]
-    #
-    # Data sets
-    #
-
-    if __C.CNTK.DATASET == "HotailorPOC2":
-        __C.CNTK.MODEL_NAME = "HotailorPOC2.model"
-        __C.CNTK.CLASS_MAP_FILE = "HotailorPOC2_class_map.txt"
-    [..]
-    ```
-
-    Variables used by `evaluate.py` to properly preprocess images and use CNTK eval function
-    
-    ```Python
-    [..]
-    __C.CNTK.IMAGE_WIDTH = 1000
-    __C.CNTK.IMAGE_HEIGHT = 1000
-    __C.CNTK.NUM_CHANNELS = 3
-    [..]
-    ```
-
-- [requirements.txt](requirements.txt)
-
-    It holds all the dependencies required by my application and CNTK libraries to work.
-    ```Python
-    easydict==1.6
-    pytest==3.0.3
-    opencv-python
-    https://pypi.python.org/packages/be/5c/670e88bc3ae6afa23c1f09d52a77bbbc7d2e476e7449ad3b6750040a0ac6/scipy-1.0.0b1-cp35-none-win_amd64.whl#md5=dcc90577f2eebc264ec60a2d5729e30b
-    https://cntk.ai/PythonWheel/CPU-Only/cntk-2.1-cp35-cp35m-win_amd64.whl
-    Flask==0.12.2
-    numpy==1.11.2
-    matplotlib==1.5.3
-    ipython==6.2.0
-    Pillow==4.1.1
-    PyYAML==3.12
-    ```
-    As you can see in most cases we use specific versions of modules and sometimes we even explicitly point out the correct .whl file to use for installation
-
-    
-    
-# Use custom dataset
-[[back to the top]](#table-of-contents)
-
-Prepare data
-
-Image tagging tool
-C1
-C2
-C3
-
-Config.py changes
-
-install_data and model
-
-train 
-
-evaluate
-
-deploy to RESTful Python web service on Azure Web Apps
+Trained model, neural network topology and evaluated images (with plotted results) can later be found in `Output` folder located in [Detection/FasterRCNN](Detection/FasterRCNN).
