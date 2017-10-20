@@ -18,12 +18,7 @@ from helpers import *
 ####################################
 # Parameters
 ####################################
-#imgDir = "../../DataSets/Fashion_50_1000/testImages"
-#imgDir = "../../DataSets/MyGrocery/testImages"
-#imgDir = "../../DataSets/MyGrocery/positive"
-#imgDir = "../../DataSets/Grocery/testImages"
-#imgDir = "../../DataSets/Grocery/positive"
-
+#change it to your images directory. Run this script separately for each folder
 imgDir = "../../DataSets/HotailorPOC2/testImages"
 
 
