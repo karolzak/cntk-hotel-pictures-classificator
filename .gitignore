@@ -208,7 +208,6 @@ DataSets/HotailorPOC2/negative
 DataSets/HotailorPOC2/positive
 DataSets/HotailorPOC2/testImages
 DataSets/HotailorPOC2/*.txt
-Readme.md
 Detection/FasterRCNN/eval.py
 
 # models
