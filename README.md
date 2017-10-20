@@ -171,7 +171,7 @@ You can find running web service hosted on Azure Web Apps [here](http://cntkpywe
 
 3. **Download hotel pictures dataset (HotailorPOC2) and pretrained AlexNet model used for Transfer Learning**
 
-    Go to `/Detection/FasterRCNN` folder in the location were you unzipped this repo and run `install_data_and_model.py`. It will automatically download the HotailorPOC2 dataset, pretrained AlexNet model and will generate mapping files required to train the model.
+    Go to [Detection/FasterRCNN](Detection/FasterRCNN) folder in the location were you unzipped this repo and run `install_data_and_model.py`. It will automatically download the `HotailorPOC2` dataset, pretrained AlexNet model and will generate mapping files required to train the model.
     
 ## Train and evaluate the model using HotailorPOC2 sample dataset
 [[back to the top]](#table-of-contents)
@@ -180,7 +180,7 @@ You can find running web service hosted on Azure Web Apps [here](http://cntkpywe
 
 After you go through setup steps you can start training your model.
 
-In order to do it you need to run `FasterRCNN.py`script in [Detection/FasterRCNN](detection/fasterrcnn). 
+In order to do it you need to run `FasterRCNN.py`script in [Detection/FasterRCNN](Detection/FasterRCNN). 
 
 I'm working on Windows 10 so I run the script from Anaconda Command Prompt which should be installed during setup steps.
 
