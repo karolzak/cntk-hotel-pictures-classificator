@@ -321,7 +321,7 @@ Although this project was prepared specifically for Hotailors case, it's based o
 
     - **Create a dataset**
 
-        Create a new folder in [Datasets](Datasets) directory and name it with whatever your datasets name is and inside that newly created folder create 3 another folders for your images:
+        Create a new folder in `Datasets` directory and name it with whatever your datasets name is and inside that newly created folder create 3 another folders for your images:
 
         - `negative`
 
