@@ -26,6 +26,7 @@ __C.CNTK.USE_MEAN_GRADIENT = True
 __C.CNTK.FORCE_DETERMINISTIC = True
 __C.CNTK.FAST_MODE = False
 
+# set it to your custom dataset name
 __C.CNTK.DATASET = "HotailorPOC2" 
 __C.CNTK.BASE_MODEL = "AlexNet" # "VGG16" or "AlexNet" or "VGG19"
 __C.CNTK.CONV_BIAS_INIT = 0.0
@@ -47,7 +48,11 @@ __C.CNTK.RPN_LR_PER_SAMPLE = [0.001] * 12 + [0.0001] * 4
 __C.CNTK.FRCN_EPOCHS = 8
 __C.CNTK.FRCN_LR_PER_SAMPLE = [0.001] * 6 + [0.0001] * 2
 
+# number of maximum number of ROI per image
 __C.CNTK.INPUT_ROIS_PER_IMAGE = 3000
+
+
+# set it to your custom datasets images resolution
 __C.CNTK.IMAGE_WIDTH = 1000
 __C.CNTK.IMAGE_HEIGHT = 1000
 
@@ -74,16 +79,16 @@ __C.CNTK.DIMS_STREAM_NAME = 'dims'
 #
 
 
+__C.CNTK.CLASS_MAP_FILE = "class_map.txt"
+__C.CNTK.TRAIN_MAP_FILE = "train_img_file.txt"
+__C.CNTK.TEST_MAP_FILE = "test_img_file.txt"
+__C.CNTK.TRAIN_ROI_FILE = "train_roi_file.txt"
+__C.CNTK.TEST_ROI_FILE = "test_roi_file.txt"
 
-if __C.CNTK.DATASET == "HotailorPOC2":
-    __C.CNTK.MAP_FILE_PATH = "../../DataSets/HotailorPOC2"
-    __C.CNTK.CLASS_MAP_FILE = "class_map.txt"
-    __C.CNTK.TRAIN_MAP_FILE = "train_img_file.txt"
-    __C.CNTK.TEST_MAP_FILE = "test_img_file.txt"
-    __C.CNTK.TRAIN_ROI_FILE = "train_roi_file.txt"
-    __C.CNTK.TEST_ROI_FILE = "test_roi_file.txt"
-    __C.CNTK.NUM_TRAIN_IMAGES = 82
-    __C.CNTK.NUM_TEST_IMAGES = 20
+if __C.CNTK.DATASET == "HotailorPOC2": #name of your dataset. Must match the name set with property '__C.CNTK.DATASET'
+    __C.CNTK.MAP_FILE_PATH = "../../DataSets/HotailorPOC2" # your dataset directory
+    __C.CNTK.NUM_TRAIN_IMAGES = 82 # number of images in 'positive' folder
+    __C.CNTK.NUM_TEST_IMAGES = 20 # number of images in 'testImages' folder
     __C.CNTK.PROPOSAL_LAYER_PARAMS = "'feat_stride': 16\n'scales':\n - 4 \n - 8 \n - 12"
 
 #

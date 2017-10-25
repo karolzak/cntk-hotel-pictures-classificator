@@ -30,6 +30,7 @@ if __name__ == '__main__':
     download_model_by_name(cfg["CNTK"].BASE_MODEL)
 
     #downloads hotel pictures classificator dataset (HotailorPOC2)
+    #comment out lines bellow if you're using a custom dataset
     sys.path.append(os.path.join(base_folder, "..", "..",  "DataSets", "HotailorPOC2"))
     from download_HotailorPOC2_dataset import download_dataset
     download_dataset()

@@ -9,7 +9,7 @@
     - [Setup](#setup)
     - [Train and evaluate the model](#train-and-evaluate-the-model-using-hotailorpoc2-sample-dataset) 
 - [Code highlights](#code-highlights)
-- [Use custom dataset](#use-custom-dataset)
+- [Use with custom dataset](#use-with-custom-dataset)
 
 <br><br>
 
@@ -126,7 +126,7 @@ If you would like to know how to use such model, you can check [**this project**
 
     *Another picture shows how our model classified single region as **`towel`** object although it's clearly not there:*![](doc/bad_bedroom.jpg)
 
-- Ofcourse sometimes there are some really ugly results which may be hard to use for further classification:
+- Of course sometimes there are some really ugly results which may be hard to use for further classification:
 
     ![](doc/ugly_bathroom.jpg)
 
@@ -180,7 +180,7 @@ You can find running web service hosted on Azure Web Apps [here](http://cntkpywe
 
 After you go through setup steps you can start training your model.
 
-In order to do it you need to run `FasterRCNN.py`script in [Detection/FasterRCNN](Detection/FasterRCNN). 
+In order to do it you need to run `FasterRCNN.py`script located in [Detection/FasterRCNN](Detection/FasterRCNN). 
 
 I'm working on Windows 10 so I run the script from Anaconda Command Prompt which should be installed during setup steps.
 
@@ -209,4 +209,276 @@ AP for             bed = 0.8333
 Mean AP = 0.4489
 ```
 
-Trained model, neural network topology and evaluated images (with plotted results) can later be found in `Output` folder located in [Detection/FasterRCNN](Detection/FasterRCNN).
+Trained model, neural network topology and evaluated images (with plotted results) can later be found in `Output` folder located in `Detection/FasterRCNN`.
+
+<br><br>
+
+# Code highlights
+[[back to the top]](#table-of-contents)
+
+- [config.py](Detection/FasterRCNN/config.py) - most of variables are set in this file
+
+    - These variables are responsible for chosing a dataset that will be used to train the model. Most important variables here are  :
+
+        ```Python    
+        __C.CNTK.DATASET = "HotailorPOC2"   
+
+        [..]  
+    
+        if __C.CNTK.DATASET == "HotailorPOC2": #name of your dataset Must match the name set with property '__C.CNTK.DATASET'
+            __C.CNTK.MAP_FILE_PATH = "../../DataSets/HotailorPOC2" # dataset directory
+            __C.CNTK.NUM_TRAIN_IMAGES = 82 # number of images in 'positive' folder
+            __C.CNTK.NUM_TEST_IMAGES = 20 # number of images in 'testImages' folder
+            __C.CNTK.PROPOSAL_LAYER_PARAMS = "'feat_stride': 16\n'scales':\n - 4 \n - 8 \n - 12"
+        ```
+
+    - `IMAGE_WIDTH` and `IMAGE_HEIGHT` are used to determine the input size of images used for training and later on for evaluation:
+
+        ```Python
+        __C.CNTK.IMAGE_WIDTH = 1000
+        __C.CNTK.IMAGE_HEIGHT = 1000
+        ```
+
+    - `BASE_MODEL` defines which pretrained model should be used for transfer learning. Currently we used only AlexNet. In future we want to test it with VGG16 to check if we can get better results then with AlexNet 
+
+        ```Python
+        __C.CNTK.BASE_MODEL = "AlexNet" # "VGG16" or "AlexNet" or "VGG19"
+        ```
+
+- [requirements.txt](Detection/FasterRCNN/requirements.txt)
+
+    - It holds all the dependencies required by my scripts and CNTK libraries to work. It can be used with `pip install` command to quickly install all the required dependencies ([more here](https://pip.pypa.io/en/stable/user_guide/#requirements-files))
+    
+        ```
+        matplotlib==1.5.3
+        numpy==1.13.3
+        cntk==2.1
+        easydict==1.6
+        Pillow==4.3.0
+        utils==0.9.0
+        PyYAML==3.12
+        ```
+
+- [install_data_and_model.py](Detection/FasterRCNN/install_data_and_model.py)
+
+    - This script does 3 things:
+        - Downloads pretrained model specified in [config.py](Detection/FasterRCNN/config.py) which will be later used for transfer learning:
+            
+            ```Python
+            #downloads pretrained model pointed out in config.py that will be used for transfer learning
+            sys.path.append(os.path.join(base_folder, "..", "..",  "PretrainedModels"))
+            from models_util import download_model_by_name
+            download_model_by_name(cfg["CNTK"].BASE_MODEL)
+            ```
+        
+        - Downloads and unzips our sample HotailorPOC2 dataset:
+
+            ```Python
+            #downloads hotel pictures classificator dataset (HotailorPOC2)
+            #comment out lines bellow if you're using a custom dataset
+            sys.path.append(os.path.join(base_folder, "..", "..",  "DataSets", "HotailorPOC2"))
+            from download_HotailorPOC2_dataset import download_dataset
+            download_dataset()    
+            ```
+
+        - Creates mappings and metadata for dataset:
+            
+            ```Python
+            #generates metadata for dataset required by FasterRCNN.py script
+            print("Creating mapping files for data set..")
+            create_mappings(base_folder)
+            ```
+
+- [FasterRCNN.py](Detection/FasterRCNN/FasterRCNN.py)
+
+    - We use this script for training and testing the model. It makes use of specific variables in [config.py](Detection/FasterRCNN/config.py). This script comes unmodified from original [CNTK repository on GitHub](https://github.com/Microsoft/CNTK) (version 2.1)
+
+
+<br><br>
+    
+# Use with custom dataset
+[[back to the top]](#table-of-contents)
+
+Although this project was prepared specifically for Hotailors case, it's based on one of the standard examples from original [CNTK repository on GitHub](https://github.com/Microsoft/CNTK) and thus it can be easily reused in any other scenario. You just need to follow steps bellow:
+
+- ### Setup ###
+    
+    Follow steps number 1 and 2 from [setup instructions](#setup).
+
+- ### Prepare data ###
+
+    - **Gather data for your dataset**
+
+        - Think what type of objects you would like to classify and prepare some images with those objects. The more the better but usually u should get some decent results even with 30-40+ samples per object. Remember that single image can have multiple objects (it was exactly like that in our case)
+        
+        - Make sure to use only good quality images in specific resolution 
+
+        - Resolution we used for our project was 1000x1000 px but you can easily lower it depending on your scenario and needs. Just make sure to scale your images to this one specific resolution you will be working with. In our case the original images where much larger then 1000x1000 px but we scalled it down to match the longer side of image to 1000 px
+
+        - It's not recommended to go beyond 1000x1000 px
+
+    <br>
+
+    - **Create a dataset**
+
+        Create a new folder in [Datasets](Datasets) directory and name it with whatever your datasets name is and inside that newly created folder create 3 another folders for your images:
+
+        - `negative`
+
+            Here you must add images which don't include any of the objects you will be looking for. The more the better but don't get crazy here, 10 to 20 images should more then enought. Those images will be used during training to show our model what is not interesting for us and should be treated as a background
+
+        - `positive`
+
+            Here you must add images that will be used to teach our model what kind of objects it should look for. The more the better but we should be able to see **some results with 30-40+ images per class/object** we would like to detect. Just bear in mind that **one image can have more then one object/class**.
+
+        - `testImages`
+
+            Those images will be used for testing of your trained model and to evaluate AP (Average Precission) percentage for each class. Just take 20-30 percent of images from `positive` folder and put them here. It's very important though to not duplicate any images between `positive` and `testImages` folders as it may corrupt the results
+
+    <br>
+
+    - **Tagging the images**
+        
+        In order to make your custom dataset ready to be used for training you will need to create some metadata with coordinates of objects and their names (classes)
+
+        There are couple of tools you can use to achieve that but I personally prefer simple Python scripts that can be found in original CNTK github repository (mine were fine tuned a bit):
+
+        - [C1_DrawBboxesOnImages.py](Detection/ImageTaggingTool/C1_DrawBboxesOnImages.py) - allows you to draw bounding boxes for all the objects which are interesting to you (present objects you wish to recognize).
+
+            There is one variable you will need to change before running this script:
+
+            ```Python
+            #change it to your images directory. Run this script separately for each folder
+            imgDir = "../../DataSets/HotailorPOC2/testImages"
+            ```
+
+            Important thing to mention here is to run this script only for `positive` and `testImages`. You don't need to do it for `negative` because there's actually nothing to tag there.
+
+            After successfully running the script you should see something like that:
+
+            ![C1](doc/C1.jpg)
+
+            Now just use your mouse to draw bounding boxes for every object.
+            Some keyboard shortcuts should be helpful here:
+
+            "u" - will erase last bounding box you draw
+
+            "n" - will move you to next image in current folder
+
+            "s" - will skip current image and delete all the bounding boxes for that image
+
+        <br>
+
+        - [C2_AssignLabelsToBboxes.py](Detection/ImageTaggingTool/C2_AssignLabelsToBboxes.py) - allows to review every bounding box you've marked with C1 script and label it with proper class name.
+
+            Before running this script change those 2 variables:
+
+            ```Python
+            #change it to your images directory. Run this script separately for each folder
+            imgDir = "../../DataSets/HotailorPOC2/testImages"
+
+            #change it to your classes names
+            classes = ["curtain", "pillow", "bed", "lamp", "toilet", "sink", "tap", "towel"]
+            ```
+
+            Again, same as in C1, run this script only for `positive` and `testImages`.
+            
+            ![C2](doc/C2.jpg)
+
+        <br>
+
+        - [C3_VisualizeBboxes.py](Detection/ImageTaggingTool/C3_VisualizeBboxes.py) - I made this script based on C2 just to visualize bounding boxes for each image in dataset. It's very helpful when you are looking for mistakes within your dataset.
+
+            Be sure to change `imgDir` variable to your directory:
+
+            ```Python
+            #change it to your images directory. Run this script separately for each folder
+            imgDir = "../../DataSets/HotailorPOC2/testImages"
+            ```
+
+            Running C3 script will visualize bounding boxes for every image in directory and you should be able to see if everything is marked correctly:
+            
+            ![C3](doc/C3.jpg)
+            
+    <br>
+
+    - **Download pretrained model and create class mappings and metadata for custom dataset** 
+
+        In order to train the model we use transfer learning and we need to have a pretrained model for that. For this sample we use AlexNet model.
+
+        To download the model and create class and files mappings you can use [install_data_and_model.py](Detection/FasterRCNN/install_data_and_model.py) script and simply follow these steps:
+
+        - Make sure to [change variables](#change-variables) in your [config.py](Detection/FasterRCNN/config.py) file and make sure you set `__C.CNTK.MAP_FILE_PATH` variable to a proper directory:
+
+            ```Python        
+            if __C.CNTK.DATASET == "HotailorPOC2": #name of your dataset. Must match the name set with property '__C.CNTK.DATASET'
+                __C.CNTK.MAP_FILE_PATH = "../../DataSets/HotailorPOC2" # your dataset directory
+                __C.CNTK.NUM_TRAIN_IMAGES = 82 # number of images in 'positive' folder
+                __C.CNTK.NUM_TEST_IMAGES = 20 # number of images in 'testImages' folder
+                __C.CNTK.PROPOSAL_LAYER_PARAMS = "'feat_stride': 16\n'scales':\n - 4 \n - 8 \n - 12"
+            ```
+        
+        - Open [install_data_and_model.py](Detection/FasterRCNN/install_data_and_model.py) script and comment out those lines:
+
+            ```Python 
+            #downloads hotel pictures classificator dataset (HotailorPOC2)
+            #comment out lines bellow if you're using a custom dataset
+            sys.path.append(os.path.join(base_folder, "..", "..",  "DataSets", "HotailorPOC2"))
+            from download_HotailorPOC2_dataset import download_dataset
+            download_dataset()
+            ```
+
+        - Run [install_data_and_model.py](Detection/FasterRCNN/install_data_and_model.py) script. Bear in mind that downloading the pretrained model may take few minutes or even more depending on your internet connection.
+
+    At this point your custom dataset should be ready for training.
+
+<br>
+
+- ### Run training ###
+
+    - #### Change variables ####
+    
+        Edit [config.py](Detection/FasterRCNN/config.py) script and change following variables:
+
+        - Change value of `__C.CNTK.DATASET`:        
+            ```Python
+            # set it to your custom dataset name
+            __C.CNTK.DATASET = "HotailorPOC2" 
+            ```
+
+        - Change values of `__C.CNTK.IMAGE_WIDTH` and `__C.CNTK.IMAGE_HEIGHT` to much your custom dataset images resolution:        
+            ```Python
+            # set it to your custom datasets images resolution
+            __C.CNTK.IMAGE_WIDTH = 1000
+            __C.CNTK.IMAGE_HEIGHT = 1000 
+            ```
+
+        - Change values in following code to match your dataset name, your datasets directory location and to match your custom dataset images resolution:        
+            ```Python
+            if __C.CNTK.DATASET == "HotailorPOC2": #name of your dataset. Must match the name set with property '__C.CNTK.DATASET'
+                __C.CNTK.MAP_FILE_PATH = "../../DataSets/HotailorPOC2" # your dataset directory
+                __C.CNTK.NUM_TRAIN_IMAGES = 82 # number of images in 'positive' folder
+                __C.CNTK.NUM_TEST_IMAGES = 20 # number of images in 'testImages' folder
+            ```
+
+    <br>
+
+    - **Train and test your model with [FasterRCNN.py](Detection/FasterRCNN/FasterRCNN.py) script** 
+
+        Run `FasterRCNN.py` script and wait till the training and testing finishes.
+
+        Training may take even couple hours depending on your hardware setup. It's is best to use high performing GPU's for that kind of purposes. 
+
+        **TIP:** If you don't own any machine with heavy GPU you can use one of the ready to go [Data Science Virtual Machine images in Azure](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/microsoft-ads.windows-data-science-vm).
+
+        If you won't be satisfied with training results then try fine tunning the variables and cleaning your dataset if necessary and then rerun the training.
+
+<br>
+
+- ### Deploy your model ###
+
+    When you will find yourself satisfied with your model and you would like to get to know how to use it with RESTful Python web service and deploy it to Azure Web Apps, then check out [this repository](https://github.com/karolzak/CNTK-Python-Web-Service-on-Azure).
+
+
+
+
