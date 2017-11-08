@@ -3,9 +3,9 @@ from __future__ import print_function
 from builtins import str
 import  os
 import numpy as np
-
+import copy
 import cv2
-from PIL import Image, ImageFont
+from PIL import Image, ImageFont, ImageDraw
 from PIL.ExifTags import TAGS
 
 available_font = "arial.ttf"
@@ -66,11 +66,22 @@ def rotationFromExifTag(imgPath):
             error
     return rotation
 
-def drawRectangles(img, rects, color = (0, 255, 0), thickness = 2):
+def drawRectangles(img, rects, color = (0, 255, 0), thickness = 2):    
     for rect in rects:
         pt1 = tuple(ToIntegers(rect[0:2]))
         pt2 = tuple(ToIntegers(rect[2:]))
         cv2.rectangle(img, pt1, pt2, color, thickness)
+
+def getColorsPalette():
+    colors = [[255,0,0], [0,255,0], [0,0,255], [255,255,0], [255,0,255]]
+    for i in range(5):
+        for dim in range(0,3):
+            for s in (0.25, 0.5, 0.75):
+                if colors[i][dim] != 0:
+                    newColor = copy.deepcopy(colors[i])
+                    newColor[dim] = int(round(newColor[dim] * s))
+                    colors.append(newColor)
+    return colors
 
 def ToIntegers(list1D):
     return [int(float(x)) for x in list1D]
@@ -81,6 +92,47 @@ def drawCrossbar(img, pt):
     cv2.rectangle(img, (x, 0), (x, y), (255, 255, 0), 1)
     cv2.rectangle(img, (img.shape[1],y), (x, y), (255, 255, 0), 1)
     cv2.rectangle(img, (x, img.shape[0]), (x, y), (255, 255, 0), 1)
+
+def imconvertPil2Cv(pilImg):
+    rgb = pilImg.convert('RGB')
+    return np.array(rgb).copy()[:, :, ::-1]
+
+def imconvertCv2Pil(img):
+    cv2_im = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    return Image.fromarray(cv2_im)
+
+def cv2DrawText(img, pt, text, color = (255,255,255), colorBackground = None):
+    # Write some Text
+    font                   = cv2.FONT_HERSHEY_SIMPLEX
+    fontScale              = 0.6
+    lineType               =2
+    cv2.putText(img,text, 
+        pt, 
+        font, 
+        fontScale,
+        color,
+        lineType)
+
+
+def pilDrawText(pilImg, pt, text, textWidth=None, color = (255,255,255), colorBackground = None, font = ImageFont.truetype("arial.ttf", 16)):
+    textY = pt[1]
+    draw = ImageDraw.Draw(pilImg)
+    if textWidth == None:
+        lines = [text]
+    else:
+        lines = textwrap.wrap(text, width=textWidth)
+    for line in lines:
+        width, height = font.getsize(line)
+        if colorBackground != None:
+            draw.rectangle((pt[0], pt[1], pt[0] + width, pt[1] + height), fill=tuple(colorBackground[::-1]))
+        draw.text(pt, line, fill = tuple(color), font = font)
+        textY += height
+    return pilImg
+
+def drawText(img, pt, text, textWidth=None, color = (255,255,255), colorBackground = None, font = ImageFont.truetype("arial.ttf", 16)):
+    pilImg = imconvertCv2Pil(img)
+    pilImg = pilDrawText(pilImg,  pt, text, textWidth, color, colorBackground, font)
+    return imconvertPil2Cv(pilImg)
 
 def imWidth(input):
     return imWidthHeight(input)[0]
@@ -174,14 +226,6 @@ def splitString(string, delimiter='\t', columnsToKeepIndices=None):
         items = getColumns([items], columnsToKeepIndices)
         items = items[0]
     return items;
-
-def imconvertPil2Cv(pilImg):
-    rgb = pilImg.convert('RGB')
-    return np.array(rgb).copy()[:, :, ::-1]
-
-def imconvertCv2Pil(img):
-    cv2_im = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    return Image.fromarray(cv2_im)
 
 
 

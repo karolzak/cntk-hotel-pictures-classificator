@@ -193,8 +193,7 @@ core
 # directories
 Detection/FastRCNN/proc
 Detection/FastRCNN/results
-Detection/FasterRCNN/Output
-Detection/FasterRCNN/OutputAlexNet
+Detection/FasterRCNN/Output*
 Detection/FasterRCNN/Evaluate
 .idea/
 

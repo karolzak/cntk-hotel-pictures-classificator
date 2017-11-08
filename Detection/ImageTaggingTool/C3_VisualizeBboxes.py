@@ -12,6 +12,7 @@ except ImportError:
     # for Python3
     from tkinter import *
 from PIL import ImageTk
+from helpers import cv2DrawText
 from helpers import *
 
 
@@ -20,6 +21,10 @@ from helpers import *
 ####################################
 #change it to your images directory. Run this script separately for each folder
 imgDir = "../../DataSets/HotailorPOC2/testImages"
+
+
+#change it to your classes names
+classes = ["__background__","curtain", "pillow", "bed", "lamp", "toilet", "sink", "tap", "towel"]
 
 
 #no need to change these
@@ -50,21 +55,40 @@ imgFilenames = getFilesInDirectory(imgDir, ".jpg")
 imgFilenames += getFilesInDirectory(imgDir, ".png")
 for imgIndex, imgFilename in enumerate(imgFilenames):
     print (imgIndex, imgFilename)
-    labelsPath = os.path.join(imgDir, imgFilename[:-4] + ".bboxes.labels.tsv")
     ##if os.path.exists(labelsPath):
       ##  print ("Skipping image {:3} ({}) since annotation file already exists: {}".format(imgIndex, imgFilename, labelsPath))
         ##continue
 
-    # load image and ground truth rectangles
+    # load image, ground truth rectangles and labels
     img = imread(os.path.join(imgDir,imgFilename))
     rectsPath = os.path.join(imgDir, imgFilename[:-4] + ".bboxes.tsv")
+    labelsPath = os.path.join(imgDir, imgFilename[:-4] + ".bboxes.labels.tsv")
     rects = [ToIntegers(rect) for rect in readTable(rectsPath)]
-
+    with open(labelsPath) as file:
+        labels = [line.strip() for line in file]
+    
+          
     imgCopy = img.copy()
+
     # annotate each rectangle in turn
-    labels = []
-    for rectIndex,rect in enumerate(rects):
-        drawRectangles(imgCopy, [rect], thickness = 2)
+    for index in range(len(rects)):  
+
+        label = labels[index]
+        rect = rects[index]        
+        classIndex = (classes.index(label))
+
+        if classIndex == 0:
+            color = (255, 0, 0)
+        else:
+            color = tuple(getColorsPalette()[classIndex])
+        
+        drawRectangles(imgCopy, [rect], color = color, thickness = 2)
+
+        font = ImageFont.truetype(available_font, 18)
+        text = classes[classIndex]
+        textWidth = len(text)*13
+        drawRectangles(imgCopy, [[rect[0],rect[1]-23,rect[0]+textWidth,rect[1]]], color = color, thickness = -1)
+        cv2DrawText(imgCopy, (rect[0]+3,rect[1]-7), text, color = (255,255,255), colorBackground=color)
 
         # draw image in tk window
         imgTk, _ = imresizeMaxDim(imgCopy, drawingImgSize, boUpscale = True)
