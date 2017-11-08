@@ -136,7 +136,7 @@ If you would like to know how to use such model, you can check [**this project**
 
     ![](doc/ugly_bathroom.jpg)
 
-     *Next picture shows our model wasn't able to find any objects. We need to verify if it's because of wrongly tagged data in HotailorPOC2 or is it some kind of issue with [selective search algorithm](http://www.huppelen.nl/publications/selectiveSearchDraft.pdf) and it simply didn't find any [regions of interest](https://en.wikipedia.org/wiki/Region_of_interest) for evaluation* 
+     *Next picture shows our model wasn't able to find any objects. We need to verify if it's because of wrongly tagged data in HotailorPOC2 or is it some kind of issue with [Region Proposal Network](https://www.quora.com/How-does-the-region-proposal-network-RPN-in-Faster-R-CNN-work) and it simply didn't find any [regions of interest](https://en.wikipedia.org/wiki/Region_of_interest) for further classification* 
     ![](doc/ugly_bathroom2.jpg)
 
 <br><br>
