@@ -72,6 +72,17 @@ def drawRectangles(img, rects, color = (0, 255, 0), thickness = 2):
         pt2 = tuple(ToIntegers(rect[2:]))
         cv2.rectangle(img, pt1, pt2, color, thickness)
 
+def getDrawTextWidth(text):
+    textLen=len(text)
+    textWidth=50
+    if textLen <6:
+        textWidth = 60
+    elif textLen <13 :
+        textWidth = len(text)*9 +26
+    else :
+        textWidth = len(text)*9 +30
+    return textWidth
+
 def getColorsPalette():
     colors = [[255,0,0], [0,255,0], [0,0,255], [255,255,0], [255,0,255]]
     for i in range(5):
@@ -105,7 +116,7 @@ def cv2DrawText(img, pt, text, color = (255,255,255), colorBackground = None):
     # Write some Text
     font                   = cv2.FONT_HERSHEY_SIMPLEX
     fontScale              = 0.6
-    lineType               =2
+    lineType               =1
     cv2.putText(img,text, 
         pt, 
         font, 

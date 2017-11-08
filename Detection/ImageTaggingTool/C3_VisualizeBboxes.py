@@ -86,8 +86,8 @@ for imgIndex, imgFilename in enumerate(imgFilenames):
 
         font = ImageFont.truetype(available_font, 18)
         text = classes[classIndex]
-        textWidth = len(text)*13
-        drawRectangles(imgCopy, [[rect[0],rect[1]-23,rect[0]+textWidth,rect[1]]], color = color, thickness = -1)
+        
+        drawRectangles(imgCopy, [[rect[0],rect[1]-23,rect[0]+getDrawTextWidth(text),rect[1]]], color = color, thickness = -1)
         cv2DrawText(imgCopy, (rect[0]+3,rect[1]-7), text, color = (255,255,255), colorBackground=color)
 
         # draw image in tk window
