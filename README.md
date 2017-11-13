@@ -347,7 +347,7 @@ Follow steps number 1 and 2 from [setup instructions](#setup).
     
 In order to make your custom dataset ready to be used for training you will need to create some metadata with coordinates of objects and their names (classes)
 
-There are couple of tools you can use to achieve that but I personally prefer simple Python scripts that can be found in original CNTK github repository (mine were fine tuned a bit):
+Currently the best tool for tagging images is [Visual object Taging Tool](https://github.com/Microsoft/VoTT) but for this project I used simple Python scripts that can be found in the original CNTK 2.1 github repository (mine were fine tuned a bit):
 
 - [C1_DrawBboxesOnImages.py](Detection/ImageTaggingTool/C1_DrawBboxesOnImages.py) - allows you to draw bounding boxes for all the objects which are interesting to you (present objects you wish to recognize).
 
