@@ -301,12 +301,12 @@ def ptClip(pt, maxWidth, maxHeight):
     pt[1] = min(pt[1], maxHeight)
     return pt
 
-def drawText(img, pt, text, textWidth=None, color = (255,255,255), colorBackground = None, font = ImageFont.truetype("arial.ttf", 16)):
+def drawText(img, pt, text, textWidth=None, color = (255,255,255), colorBackground = None, font = ImageFont.truetype(available_font, 16)):
     pilImg = imconvertCv2Pil(img)
     pilImg = pilDrawText(pilImg,  pt, text, textWidth, color, colorBackground, font)
     return imconvertPil2Cv(pilImg)
 
-def pilDrawText(pilImg, pt, text, textWidth=None, color = (255,255,255), colorBackground = None, font = ImageFont.truetype("arial.ttf", 16)):
+def pilDrawText(pilImg, pt, text, textWidth=None, color = (255,255,255), colorBackground = None, font = ImageFont.truetype(available_font, 16)):
     textY = pt[1]
     draw = ImageDraw.Draw(pilImg)
     if textWidth == None:
