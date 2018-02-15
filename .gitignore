@@ -205,6 +205,7 @@ Detection/utils/Readme.md
 Detection/FasterRCNN/Readme.md
 PretrainedModels/Readme.md
 DataSets/HotailorPOC2/negative
+DataSets/HotailorPOC2Copy
 DataSets/HotailorPOC2/positive
 DataSets/HotailorPOC2/testImages
 DataSets/HotailorPOC2/*.txt
